@@ -2,20 +2,20 @@
 #Desc:Docker of CentOS for Java App Run
 #Include:
 #1).CentOS
-#2).JDK,1.7
-#3).Nginx:1.9.9
+#2).JDK,1.8
+#3).Nginx:1.9.14
 #4).Ant:1.9.6
 #5).Maven:3.3.3
-#Write By :haipenge@gmail.com
+#Write By :cmcm0808@163.com
 #Date:2016.01.15
 #################################################################
 #From centos:version
-FROM centos:6
-MAINTAINER docker_user haipenge@gmail.com
+FROM centos:7
+MAINTAINER docker_user cmcm0808@163.com
 ######################## SET Env version info ############################
 #ENV ANT_VERSION=1.9.6
 #ENV M2_VERSION=3.3.3
-#ENV JDK_VERSION=1.7.0_80
+#ENV JDK_VERSION=1.8.0_77
 #ENV RESIN_VERSION=4.0.44
 ######################## End Version Config ##############################
 RUN yum update -y && \

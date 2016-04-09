@@ -10,8 +10,8 @@ current_date=`date +%Y%m%d-%H%M%S`
 ##版本
 ANT_VERSION=1.9.6
 M2_VERSION=3.3.9
-JDK_VERSION=1.7.0_80
-JDK_PACKAGE=7u80-b15
+JDK_VERSION=1.8.0_77
+JDK_PACKAGE=7u80-b03
 JDK_FILE_NAME=jdk-7u80-linux-x64.tar.gz
 RESIN_VERSION=4.0.47
 #初始化目录
