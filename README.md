@@ -11,9 +11,9 @@ docker-nginx-resin
           如何安装docker:https://docs.docker.com/engine/installation/centos/
        2).初始化
           clone代码后，在根目录执行
-          $docker build -t centos-env-6 .
+          $docker build -t centos-env-7 .
        3).启动容器
-          $docker run -t -i centos-env-6 /bin/bash
+          $docker run -t -i centos-env-7 /bin/bash
        4).安装nginx
           $ cd /
           $ cd /app
