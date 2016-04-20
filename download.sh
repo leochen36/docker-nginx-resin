@@ -11,12 +11,16 @@ current_date=`date +%Y%m%d-%H%M%S`
 ANT_VERSION=1.9.6
 M2_VERSION=3.3.9
 JDK_VERSION=1.8.0_77
-JDK_PACKAGE=7u80-b03
-JDK_FILE_NAME=jdk-7u80-linux-x64.tar.gz
-RESIN_VERSION=4.0.47
+JDK_PACKAGE=8u77-b03
+JDK_FILE_NAME=jdk-8u77-linux-x64.tar.gz
+#RESIN_VERSION=4.0.47
+JETTY_VERSION=9.3.8.v20160314
+JETTY_FILE_NAME=jetty-9.3.8.tar.tz
+
+
 #初始化目录
 cd $ROOT
-mkdir -p ant maven resin jdk bak
+mkdir -p ant maven resin jdk bak jetty
 #下载Ant
 cd $ROOT/ant
 wget http://apache.fayea.com//ant/binaries/apache-ant-$ANT_VERSION-bin.tar.gz .
@@ -43,6 +47,8 @@ export M2_HOME
 export ANT_HOME
 export PATH
 export CLASSPATH
+
+
 ####/etc/profile 配置示例
 #JAVA_HOME=/usr/local/java/jdk1.7.0_80
 #PATH=$JAVA_HOME/bin:$PATH
@@ -58,15 +64,19 @@ export CLASSPATH
 #export CLASSPATH
 
 ##下载Resin
-cd $ROOT/resin
-wget http://caucho.com/download/resin-$RESIN_VERSION.tar.gz .
-tar -zxvf resin-$RESIN_VERSION.tar.gz
-mv $ROOT/resin/resin-$RESIN_VERSION/conf/resin.xml $ROOT/bak/resin.xml_$current_date
-cp $ROOT/resin.xml $ROOT/resin/resin-$RESIN_VERSION/conf/
-mv $ROOT/resin/resin-$RESIN_VERSION/conf/resin.properties $ROOT/bak/resin.properties_$current_date
-cp $ROOT/resin.properties $ROOT/resin/resin-$RESIN_VERSION/conf/
+#cd $ROOT/resin
+#wget http://caucho.com/download/resin-$RESIN_VERSION.tar.gz .
+#tar -zxvf resin-$RESIN_VERSION.tar.gz
+#mv $ROOT/resin/resin-$RESIN_VERSION/conf/resin.xml $ROOT/bak/resin.xml_$current_date
+#cp $ROOT/resin.xml $ROOT/resin/resin-$RESIN_VERSION/conf/
+#mv $ROOT/resin/resin-$RESIN_VERSION/conf/resin.properties $ROOT/bak/resin.properties_$current_date
+#cp $ROOT/resin.properties $ROOT/resin/resin-$RESIN_VERSION/conf/
 
 #启动Resin
 
+
+##下载jetty
+##cd $ROOT/jetty
+ 
 
 
