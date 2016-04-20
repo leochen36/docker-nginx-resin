@@ -16,7 +16,7 @@ NODE_VERSION=4.4.3
 
 
 ##安装控制
-INSTALL_BASE_ENVI=false
+INSTALL_BASE_ENVI=false   ##基础环境
 
 INSTALL_JDK=false
 INSTALL_NGINX=false
@@ -220,7 +220,7 @@ then
 	
 	echo "gem 换源"
 	gem source -r https://rubygems.org/
-	gem source -a http://ruby.taobao.org
+	gem source -a https://ruby.taobao.org
 
 fi
 ##install ruby end ########################################
