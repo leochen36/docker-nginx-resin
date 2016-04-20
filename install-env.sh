@@ -9,17 +9,20 @@ M2_VERSION=3.3.9
 JDK_VERSION=1.8.0_77
 JDK_PACKAGE=8u77-b03
 JDK_FILE_NAME=jdk-8u77-linux-x64.tar.gz
+NODE_VERSION=4.4.3
 #RESIN_VERSION=4.0.47
 #JETTY_VERSION=9.3.8.v20160314
 #JETTY_FILE_NAME=jetty-9.3.8.tar.tz
 
 
 ##安装控制
-INSTALL_JDK=true
-INSTALL_NGINX=true
+INSTALL_BASE_ENVI=false
+
+INSTALL_JDK=false
+INSTALL_NGINX=false
 INSTALL_PHP=false
-INSTALL_REDIS=true
-INSTALL_MYSQL=true
+INSTALL_REDIS=false
+INSTALL_MYSQL=false
 INSTALL_RUBY=true
 INSTALL_SAAS=true  #css自动化的构建
 INSTALL_NODE=true
@@ -27,31 +30,36 @@ INSTALL_NODE_GRUNT=true
 
 
 
-echo "start>>>"
-##安装基础组件
-yum -y install make gcc gcc-c++ glibc make cmake automake bison-devel  ncurses-devel libtool
-##yum -y install ant
-echo "install jemalloc"
-yum -y install jemalloc
+##install 基础环境 start ########################################
 
-
-##install openssl
-echo "install openssl"
-yum -y remove openssl
-yum -y install openssl openssl-devel
-
-##install pcre
-echo "install pcre"
-yum install -y pcre-devel 
-yum install -y perl perl-devel perl-ExtUtils-Embed
-
-
-yum -y install libmcrypt-devel mhash-devel libxslt-devel \
-libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel \
-zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel \
-ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel \
-krb5 krb5-devel libidn libidn-devel 
-
+if [ "$INSTALL_BASE_ENVI" = "true" ]  
+then 
+	echo "start>>>"
+	##安装基础组件
+	yum -y install make gcc gcc-c++ glibc make cmake automake bison-devel  ncurses-devel libtool
+	##yum -y install ant
+	echo "install jemalloc"
+	yum -y install jemalloc
+	
+	
+	##install openssl
+	echo "install openssl"
+	yum -y remove openssl
+	yum -y install openssl openssl-devel
+	
+	##install pcre
+	echo "install pcre"
+	yum install -y pcre-devel 
+	yum install -y perl perl-devel perl-ExtUtils-Embed
+	
+	
+	yum -y install libmcrypt-devel mhash-devel libxslt-devel \
+	libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel \
+	zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel \
+	ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel \
+	krb5 krb5-devel libidn libidn-devel 
+fi
+##install 基础环境 end ########################################
 
 
 
@@ -237,18 +245,18 @@ if [ "$INSTALL_NODE" = "true" ]
 then 
 	echo "安装nodejs"
 	mkdir /usr/local/node
-	installPath="/usr/local/node/node-v0.12.3-linux-x64"
+	installPath="/usr/local/node/node-v$NODE_VERSION"
 	mapPath="/usr/local/node/node"
 	
 	#这里的-f参数判断$myFile是否存在  
-	if [ ! -f "node-v0.12.3-linux-x64.tar.gz" ]; then  
+	if [ ! -f "node-v$NODE_VERSION.tar.gz" ]; then  
 		echo "wget node"
-		wget http://nodejs.org/dist/v0.12.3/node-v0.12.3-linux-x64.tar.gz
+		wget https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION.tar.gz
 	fi  
 	yum -y remove nodejs
-	tar zxvf node-v0.12.3-linux-x64.tar.gz
+	tar zxf node-v$NODE_VERSION.tar.gz
 	rm -rf "$installPath"
-	mv -f node-v0.12.3-linux-x64 /usr/local/node/
+	mv -f node-v$NODE_VERSION /usr/local/node/
 	sed -i '/export PATH=$PATH:\/usr\/local\/node\/node\/bin:\/usr\/local\/node\/npm_global\/bin/d' /etc/profile
 	sed -i '/export PATH/a\export PATH=$PATH:\/usr\/local\/node\/node\/bin:\/usr\/local\/node\/npm_global\/bin' /etc/profile
 	
@@ -257,11 +265,12 @@ then
 	source /etc/profile
 	npm config set cache "tmp/npm-cache"
 	npm config set prefix "/usr/local/node/npm_global"
+	
+	##https://registry.npmjs.org/ 官方的npm源
+	npm config set registry http://registry.cnpmjs.org ##配置指向源
+
 fi
 ##install node end ########################################
-
-##https://registry.npmjs.org/ 官方的npm源
-##npm config set registry http://registry.cnpmjs.org ##配置指向源
 
 
 ##install node-grunt start ########################################
