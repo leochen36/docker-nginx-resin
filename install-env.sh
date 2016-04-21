@@ -10,23 +10,28 @@ JDK_VERSION=1.8.0_77
 JDK_PACKAGE=8u77-b03
 JDK_FILE_NAME=jdk-8u77-linux-x64.tar.gz
 NODE_VERSION=4.4.3
+MYWEBSQL_VERSION=3.6
+MAVEN_VERSION=3.3.9
 #RESIN_VERSION=4.0.47
 #JETTY_VERSION=9.3.8.v20160314
 #JETTY_FILE_NAME=jetty-9.3.8.tar.tz
 
 
 ##安装控制
-INSTALL_BASE_ENVI=false   ##基础环境
+INSTALL_BASE_ENVI=true   ##基础环境
 
-INSTALL_JDK=false
-INSTALL_NGINX=false
-INSTALL_PHP=false
-INSTALL_REDIS=false
-INSTALL_MYSQL=false
+INSTALL_JDK=true
+INSTALL_NGINX=true
+INSTALL_PHP=true
+INSTALL_REDIS=true
+INSTALL_MYSQL=true
 INSTALL_RUBY=true
 INSTALL_SAAS=true  #css自动化的构建
 INSTALL_NODE=true
 INSTALL_NODE_GRUNT=true
+INSTALL_MYWEBSQL=true
+INSTALL_MAVEN=true   #maven
+
 
 
 
@@ -146,6 +151,38 @@ fi
 
 
 
+
+
+##install maven start ########################################
+if [ "$INSTALL_MAVEN" = "true" ]  
+then  
+	echo "install maven  start"
+	##installPath="/usr/local/"
+	mapPath="/usr/local/maven"
+
+	#这里的-f参数判断$myFile是否存在  
+	if [ ! -f "apache-maven-$TENGINE_VERSION-bin.tar.gz" ]; then  
+		echo "wget maven"
+		wget "http://apache.opencas.org/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz"
+	fi  
+	tar zxf apache-maven-$MAVEN_VERSION-bin.tar.gz
+	
+	
+	#这里的-d 参数判断$myPath是否存在  
+	#if [ ! -d "$installPath" ]; then  
+	#	echo "mkdir $installPath"
+	#	mkdir "$installPath"
+	#fi
+	
+	mv -f apache-maven-$MAVEN_VERSION "/usr/local/"
+	rm -rf "$mapPath" && ln -s "/usr/local//apache-maven-$MAVEN_VERSION" "$mapPath"
+	echo "install maven  end"
+fi
+##install maven end ########################################
+
+
+
+
 ##install php start ######################################## 
 if [ "$INSTALL_PHP" = "true" ]  
 then  
@@ -212,6 +249,37 @@ fi
 
 
 
+
+##install redis start ########################################
+if [ "$INSTALL_MYWEBSQL" = "true" ]  
+then  
+	echo "install mywebsql start"
+	
+	#这里的-f参数判断$myFile是否存在  
+	if [ ! -f "mywebsql-$MYWEBSQL_VERSION.zip" ]; then  
+		echo "wget redis"
+		wget http://nchc.dl.sourceforge.net/project/mywebsql/stable/mywebsql-$MYWEBSQL_VERSION.zip
+	fi  
+	unzip mywebsql-$MYWEBSQL_VERSION.zip 
+	mv -r mywebsql /app/
+	echo "install mywebsql end"
+fi
+##install redis end ########################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ##install ruby start ########################################
 if [ "$INSTALL_RUBY" = "true" ]  
 then  
@@ -237,9 +305,6 @@ fi
 
 
 
-echo "==================================================="
-echo "====================install nodejs==============================="
-
 ##install node start ########################################
 if [ "$INSTALL_NODE" = "true" ]  
 then 
@@ -255,8 +320,12 @@ then
 	fi  
 	yum -y remove nodejs
 	tar zxf node-v$NODE_VERSION.tar.gz
+	cd node-v$NODE_VERSION
+	./configure --prefix="$installPath" 
+	##mv -f node-v$NODE_VERSION /usr/local/node/
+	make
 	rm -rf "$installPath"
-	mv -f node-v$NODE_VERSION /usr/local/node/
+	make install
 	sed -i '/export PATH=$PATH:\/usr\/local\/node\/node\/bin:\/usr\/local\/node\/npm_global\/bin/d' /etc/profile
 	sed -i '/export PATH/a\export PATH=$PATH:\/usr\/local\/node\/node\/bin:\/usr\/local\/node\/npm_global\/bin' /etc/profile
 	
@@ -274,7 +343,7 @@ fi
 
 
 ##install node-grunt start ########################################
-if [ "$INSTALL_NODE" = "true" ]  
+if [ "$INSTALL_NODE_GRUNT" = "true" ]  
 then 
 	echo "清理grunt"
 	npm uninstall -g grunt*
@@ -304,8 +373,11 @@ then
 	
 	echo "安装express4"npm install express -g
 	npm install express-generator -g
-	npm install zmq -g
+	##npm install zmq -g  ##zeromq
 	npm install bower -g
+	
+	
+	## forever 
 	#start:启动守护进程
 	#stop:停止守护进程
 	#stopall:停止所有的forever进程
@@ -336,7 +408,7 @@ if [ "$INSTALL_XXXX_mysql" = "true" ]
 then 
 	echo "========================="
 	echo "install mysql start"
-	##wget http://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-5.6.24.tar.gz
+	wget http://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-5.6.24.tar.gz
 	installPath="/usr/local/mysql-5.6.24"
 	mapPath="/usr/local/mysql"
 	
