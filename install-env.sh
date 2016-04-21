@@ -40,8 +40,11 @@ INSTALL_MAVEN=true   #maven
 if [ "$INSTALL_BASE_ENVI" = "true" ]  
 then 
 	echo "start>>>"
+	### 如果/sbin/service 丢失,执行下面命令安装
+	#yum install -y initscripts  
+	
 	##安装基础组件
-	yum -y install make gcc gcc-c++ glibc make cmake automake bison-devel  ncurses-devel libtool
+	yum -y install make gcc gcc-c++ glibc make cmake automake bison-devel  ncurses-devel libtool lrzsz
 	##yum -y install ant
 	echo "install jemalloc"
 	yum -y install jemalloc
