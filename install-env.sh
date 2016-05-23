@@ -1,6 +1,7 @@
 #!/bin/bash
 ## centos 自助安装脚本
 
+NGINX_VERSION=1.9.15
 TENGINE_VERSION=2.1.2
 PHP_VERSION=5.6.9
 REDIS_VERSION=3.0.7
@@ -13,7 +14,7 @@ NODE_VERSION=4.4.3
 MYWEBSQL_VERSION=3.6
 MAVEN_VERSION=3.3.9
 #RESIN_VERSION=4.0.47
-#JETTY_VERSION=9.3.8.v20160314
+JETTY_VERSION=9.3.8.v20160314
 #JETTY_FILE_NAME=jetty-9.3.8.tar.tz
 
 
@@ -31,7 +32,57 @@ INSTALL_NODE=true
 INSTALL_NODE_GRUNT=true
 INSTALL_MYWEBSQL=true
 INSTALL_MAVEN=true   #maven
+INSTALL_JETTY=TRUE  #jetty
 
+
+##删除文件方法,防止删除系统目录
+function _rmdir(){
+	local cLength=${#1}
+	echo "_rmdir $1 $cLength"
+	if [ $cLength -lt 13 ] 
+	then
+		echo "此目录名长度太短,要>10个"
+	elif [ $1 = "/bin" ] 
+	then 
+		echo "此目录不能删除[$1]"
+	elif [ $1 = "/lib" ] 
+	then 
+		echo "此目录不能删除[$1]"
+	elif [ $1 = "/etc" ] 
+	then 
+		echo "此目录不能删除[$1]"
+	elif [ $1 = "/sys" ] 
+	then 
+		echo "此目录不能删除[$1]"
+	elif [ $1 = "/usr" ] 
+	then 
+		echo "此目录不能删除[$1]"
+	elif [ $1 = "/mnt" ] 
+	then 
+		echo "此目录不能删除[$1]"
+	elif [ $1 = "/opt" ] 
+	then 
+		echo "此目录不能删除[$1]"
+	elif [ $1 = "/var" ] 
+	then 
+		echo "此目录不能删除[$1]"
+	elif [ $1 = "/dev" ] 
+	then 
+		echo "此目录不能删除[$1]"
+	elif [ $1 = "/sbin" ]
+	then 
+		echo "此目录不能删除[$1]"
+	elif [ $1 = "/proc" ] 
+	then 
+		echo "此目录不能删除[$1]"
+	elif [ $1 = "/usr/local" ] 
+	then 
+		echo "此目录不能删除[$1]"
+	else 
+		rm -rf $1
+		echo "ok"
+	fi
+}
 
 
 
@@ -44,7 +95,7 @@ then
 	#yum install -y initscripts  
 	
 	##安装基础组件
-	yum -y install make gcc gcc-c++ glibc make cmake automake bison-devel  ncurses-devel libtool lrzsz
+	yum -y install make gcc gcc-c++ glibc make cmake automake bison-devel  ncurses-devel libtool lrzsz wget zip unzip
 	##yum -y install ant
 	echo "install jemalloc"
 	yum -y install jemalloc
@@ -92,11 +143,11 @@ then
 		
 	rpm -qa | grep java 
 	yum remove -y java*
-	rm -rf "$installPath"
+	_rmdir "$installPath"
 	tar zxf  $JDK_FILE_NAME
-	rm -rf "$installPath"
+	_rmdir "$installPath"
 	mv -f jdk$JDK_VERSION "$installPath"
-	rm -rf "$mapPath" && ln -s "$installPath" "$mapPath"
+	_rmdir "$mapPath" && ln -s "$installPath" "$mapPath"
 	export PATH=$PATH:/usr/local/java/bin
 	
 	
@@ -105,10 +156,70 @@ fi
 ##install jdk end ########################################
 
 
+##install jetty start ########################################
+if [ "$INSTALL_JETTY" = "true" ]  
+then    
+	echo "\r\n\r\n==============================="
+	echo "install jetty start "
+	
+	##安装路径
+	installPath="/usr/local/jetty-distribution-$JETTY_VERSION"
+	##映射路径
+	mapPath="/usr/local/jetty"
+	
+	echo "installPath:$installPath, mapPath:$mapPath"
+	#这里的-f参数判断$myFile是否存在  
+	if [ ! -f  "jetty-distribution-$JETTY_VERSION.tar.gz" ]; then  
+		echo "wget jetty"
+		wget "http://ftp.jaist.ac.jp/pub/eclipse/jetty/stable-9/dist/jetty-distribution-$JETTY_VERSION.tar.gz"  ###-O jetty-$JETTY_VERSION.tar.gz
+	fi 
+		
+	_rmdir "$installPath"
+	tar zxf jetty-distribution-$JETTY_VERSION.tar.gz
+	mv -f jetty-distribution-$JETTY_VERSION "/usr/local/"
+	_rmdir "$mapPath" && ln -s "$installPath" "$mapPath"	
+	
+	echo "install jetty end"
+fi
+##install jetty end ########################################
 
 
-##install tengine start ########################################
+
+
+##install nginx start ########################################
 if [ "$INSTALL_NGINX" = "true" ]  
+then 	
+	echo "install nginx  start"
+	installPath="/usr/local/nginx-$NGINX_VERSION"
+	mapPath="/usr/local/nginx"
+	
+	#这里的-f参数判断$myFile是否存在  
+	if [ ! -f "nginx-$NGINX_VERSION.tar.gz" ]; then  
+		echo "wget nginx"
+		wget "http://nginx.org/download/nginx-$NGINX_VERSION.tar.gz"
+	fi  
+	tar -zxf nginx-$NGINX_VERSION.tar.gz
+	cd nginx-$NGINX_VERSION
+	./configure --prefix="$installPath" \
+	--with-http_stub_status_module \
+	--with-http_gzip_static_module \
+  --with-http_perl_module \
+	--with-http_ssl_module 
+	make
+	make install
+	_rmdir "$mapPath" && ln -s "$installPath" "$mapPath"
+	
+	cd ../
+	echo "install nginx end"
+
+fi
+##install nginx end ########################################
+	
+	
+
+
+##install  nginx start ########################################
+if [ "$INSTALL_TENGINE" = "true" ]  
 then  
 	echo "install tengine  start"
 	installPath="/usr/local/tengine-$TENGINE_VERSION"
@@ -135,7 +246,7 @@ then
 	
 	make
 	
-	rm -rf "$installPath"
+	_rmdir "$installPath"
 	#这里的-d 参数判断$myPath是否存在  
 	if [ ! -d "$installPath" ]; then  
 		echo "mkdir $installPath"
@@ -143,11 +254,11 @@ then
 	fi
 	
 	make install
-	rm -rf "$mapPath" && ln -s "$installPath" "$mapPath"
-	export PATH=$PATH:/usr/local/nginx/sbin
-	chkconfig --del nginx
-	chkconfig --add nginx
-	chkconfig nginx on
+	_rmdir "$mapPath" && ln -s "$installPath" "$mapPath"
+	#export PATH=$PATH:/usr/local/nginx/sbin
+	#chkconfig --del nginx
+	#chkconfig --add nginx
+	#chkconfig nginx on
 	echo "install tengine  end"
 fi
 ##install tengine end ########################################
@@ -178,7 +289,7 @@ then
 	#fi
 	
 	mv -f apache-maven-$MAVEN_VERSION "/usr/local/"
-	rm -rf "$mapPath" && ln -s "/usr/local//apache-maven-$MAVEN_VERSION" "$mapPath"
+	_rmdir "$mapPath" && ln -s "/usr/local//apache-maven-$MAVEN_VERSION" "$mapPath"
 	echo "install maven  end"
 fi
 ##install maven end ########################################
@@ -207,9 +318,9 @@ then
 		--with-mhash --enable-zip --with-pcre-regex --with-mysql --with-mysqli \
 		--with-gd --with-jpeg-dir
 	make
-	rm -rf "$installPath"  && mkdir "$installPath"
+	_rmdir "$installPath"  && mkdir "$installPath"
 	make install
-	rm -rf "$mapPath" && ln -s "$installPath" "$mapPath"
+	_rmdir "$mapPath" && ln -s "$installPath" "$mapPath"
 	cd "$mapPath";
 	cp "$mapPath/etc/php-fpm.conf.default" "$mapPath/etc/php-fpm.conf"
 	groupadd www-data
@@ -237,11 +348,11 @@ then
 	tar zxf redis-$REDIS_VERSION.tar.gz
 	cd redis-$REDIS_VERSION
 	make
-	rm -rf "$installPath" && mkdir "$installPath"
+	_rmdir "$installPath" && mkdir "$installPath"
 	make PREFIX="$installPath" install 
 	mkdir "$installPath/conf"
 	cp redis.conf /usr/local/redis/conf/redis.conf
-	rm -rf "$mapPath" && ln -s "$installPath" "$mapPath"
+	_rmdir "$mapPath" && ln -s "$installPath" "$mapPath"
 	cd ../
 	echo "install redis end"
 fi
@@ -327,19 +438,20 @@ then
 	./configure --prefix="$installPath" 
 	##mv -f node-v$NODE_VERSION /usr/local/node/
 	make
-	rm -rf "$installPath"
+	_rmdir "$installPath"
 	make install
 	sed -i '/export PATH=$PATH:\/usr\/local\/node\/node\/bin:\/usr\/local\/node\/npm_global\/bin/d' /etc/profile
 	sed -i '/export PATH/a\export PATH=$PATH:\/usr\/local\/node\/node\/bin:\/usr\/local\/node\/npm_global\/bin' /etc/profile
 	
-	rm -rf "$mapPath" && ln -s "$installPath" "$mapPath"
+	_rmdir "$mapPath" && ln -s "$installPath" "$mapPath"
 	
 	source /etc/profile
 	npm config set cache "tmp/npm-cache"
 	npm config set prefix "/usr/local/node/npm_global"
 	
 	##https://registry.npmjs.org/ 官方的npm源
-	npm config set registry http://registry.cnpmjs.org ##配置指向源
+	npm config set registry http://registry.cnpmjs.org  --global ##配置指向源
+	##npm config set registry https://registry.npm.taobao.org --global
 
 fi
 ##install node end ########################################
@@ -441,7 +553,7 @@ then
 		-DMYSQL_USER=mysql
 	
 	make 
-	rm -rf "$installPath" && mkdir "$installPath" 
+	_rmdir "$installPath" && mkdir "$installPath" 
 	make install
 	
 	chmod u+x support-files/*
@@ -458,8 +570,34 @@ then
 	##sed -i '/user=mysql/d' /etc/my.cnf
 	##sed -i '/\[mysqld\]/a\user=mysql' /etc/my.cnf
 	##sed -i '/datadir=\/var\/lib\/mysql/c\datadir=\/data\/mysql/data' /etc/my.cnf
-	rm -rf "$mapPath" && ln -s "$installPath" "$mapPath"
+	_rmdir "$mapPath" && ln -s "$installPath" "$mapPath"
 	cd ../
+	echo "install mysql end"
+fi
+##install mysql end ########################################
+
+
+##install mysql start ########################################
+if [ "$INSTALL_MYSQL" = "true" ]  
+then 
+	echo "========================="
+	echo "install mysql start"
+	
+	##安装路径
+	installPath="/usr/local/jetty-distribution-$JETTY_VERSION"
+	##映射路径
+	mapPath="/usr/local/jetty"
+	
+	#这里的-f参数判断$myFile是否存在  
+	if [ ! -f  "mysql-community-release-el7-5.noarch.rpm" ]; then  
+		echo "wget jetty"
+		wget "wget http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm"  ###-O jetty-$JETTY_VERSION.tar.gz
+	fi 
+	rpm -ivh mysql-community-release-el7-5.noarch.rpm
+		
+	yum install -y mysql-server
+	
+	
 	echo "install mysql end"
 fi
 ##install mysql end ########################################
