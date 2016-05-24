@@ -14,7 +14,7 @@ NODE_VERSION=4.4.3
 MYWEBSQL_VERSION=3.6
 MAVEN_VERSION=3.3.9
 #RESIN_VERSION=4.0.47
-JETTY_VERSION=9.3.8.v20160314
+JETTY_VERSION=9.3.9.v20160517
 #JETTY_FILE_NAME=jetty-9.3.8.tar.tz
 
 
@@ -22,15 +22,15 @@ JETTY_VERSION=9.3.8.v20160314
 INSTALL_BASE_ENVI=true   ##基础环境
 
 INSTALL_JDK=true
-INSTALL_NGINX=true
-INSTALL_PHP=true
+INSTALL_NGINX=false
+INSTALL_PHP=false
 INSTALL_REDIS=true
-INSTALL_MYSQL=true
+INSTALL_MYSQL=false
 INSTALL_RUBY=true
 INSTALL_SAAS=true  #css自动化的构建
 INSTALL_NODE=true
 INSTALL_NODE_GRUNT=true
-INSTALL_MYWEBSQL=true
+INSTALL_MYWEBSQL=false
 INSTALL_MAVEN=true   #maven
 INSTALL_JETTY=TRUE  #jetty
 
@@ -92,10 +92,10 @@ if [ "$INSTALL_BASE_ENVI" = "true" ]
 then 
 	echo "start>>>"
 	### 如果/sbin/service 丢失,执行下面命令安装
-	#yum install -y initscripts  
+	yum install -y initscripts  
 	
 	##安装基础组件
-	yum -y install make gcc gcc-c++ glibc make cmake automake bison-devel  ncurses-devel libtool lrzsz wget zip unzip
+	yum -y install make gcc gcc-c++ glibc make cmake automake bison-devel  ncurses-devel libtool lrzsz wget zip unzip openssh-clients expect
 	##yum -y install ant
 	echo "install jemalloc"
 	yum -y install jemalloc
@@ -277,7 +277,7 @@ then
 	#这里的-f参数判断$myFile是否存在  
 	if [ ! -f "apache-maven-$TENGINE_VERSION-bin.tar.gz" ]; then  
 		echo "wget maven"
-		wget "http://apache.opencas.org/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz"
+		wget "http://mirrors.hust.edu.cn/apache/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz"
 	fi  
 	tar zxf apache-maven-$MAVEN_VERSION-bin.tar.gz
 	
@@ -591,7 +591,7 @@ then
 	#这里的-f参数判断$myFile是否存在  
 	if [ ! -f  "mysql-community-release-el7-5.noarch.rpm" ]; then  
 		echo "wget jetty"
-		wget "wget http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm"  ###-O jetty-$JETTY_VERSION.tar.gz
+		wget "http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm"  ###-O jetty-$JETTY_VERSION.tar.gz
 	fi 
 	rpm -ivh mysql-community-release-el7-5.noarch.rpm
 		
@@ -610,3 +610,10 @@ fi
 export PATH=$PATH:/usr/local/nginx/sbin:/usr/local/redis/bin:/usr/local/java/bin
 export PATH=$PATH:/usr/local/node/node/bin:/usr/local/node/npm_global/bin
 
+
+
+
+#JAVA_HOME=/usr/local/java
+#MAVEN_HOME=/usr/local/maven
+
+#PATH=$PATH:$JAVA_HOME/bin:$MAVEN_HOME/bin
