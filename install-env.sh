@@ -27,12 +27,12 @@ INSTALL_PHP=false
 INSTALL_REDIS=true
 INSTALL_MYSQL=false
 INSTALL_RUBY=true
-INSTALL_SAAS=true  #css自动化的构建
+INSTALL_SAAS=false  #css自动化的构建
 INSTALL_NODE=true
-INSTALL_NODE_GRUNT=false
+INSTALL_NODE_GRUNT=falseredis.conf
 INSTALL_MYWEBSQL=false
 INSTALL_MAVEN=true   #maven
-INSTALL_JETTY=TRUE  #jetty
+INSTALL_JETTY=true  #jetty
 
 
 ##删除文件方法,防止删除系统目录
