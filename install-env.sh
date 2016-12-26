@@ -10,7 +10,7 @@ M2_VERSION=3.3.9
 JDK_VERSION=1.8.0_77
 JDK_PACKAGE=8u77-b03
 JDK_FILE_NAME=jdk-8u77-linux-x64.tar.gz
-NODE_VERSION=4.4.3
+NODE_VERSION=7.2.1
 MYWEBSQL_VERSION=3.6
 MAVEN_VERSION=3.3.9
 #RESIN_VERSION=4.0.47
@@ -21,18 +21,18 @@ JETTY_VERSION=9.3.9.v20160517
 ##安装控制
 INSTALL_BASE_ENVI=true   ##基础环境
 
-INSTALL_JDK=true
+INSTALL_JDK=false
 INSTALL_NGINX=false
 INSTALL_PHP=false
-INSTALL_REDIS=true
+INSTALL_REDIS=false
 INSTALL_MYSQL=false
-INSTALL_RUBY=true
+INSTALL_RUBY=false
 INSTALL_SAAS=false  #css自动化的构建
 INSTALL_NODE=true
-INSTALL_NODE_GRUNT=falseredis.conf
+INSTALL_NODE_GRUNT=false
 INSTALL_MYWEBSQL=false
-INSTALL_MAVEN=true   #maven
-INSTALL_JETTY=true  #jetty
+INSTALL_MAVEN=false   #maven
+INSTALL_JETTY=false  #jetty
 
 
 ##删除文件方法,防止删除系统目录
@@ -99,6 +99,8 @@ then
 	##yum -y install ant
 	echo "install jemalloc"
 	yum -y install jemalloc
+	##sshd
+	yum install openssh-server -y
 	
 	
 	##install openssl
