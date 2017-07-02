@@ -318,7 +318,8 @@ then
 		--enable-inline-optimization --with-bz2  --with-zlib --enable-sockets \
 		--enable-sysvsem --enable-sysvshm --enable-pcntl --enable-mbregex \
 		--with-mhash --enable-zip --with-pcre-regex --with-mysql --with-mysqli \
-		--with-gd --with-jpeg-dir
+		--with-config-file-path=/etc --with-gd --with-jpeg-dir \
+		--with-apxs2=/usr/local/apache/bin/apxs
 	make
 	_rmdir "$installPath"  && mkdir "$installPath"
 	make install
@@ -597,7 +598,7 @@ then
 	fi 
 	rpm -ivh mysql-community-release-el7-5.noarch.rpm
 		
-	yum install -y mysql-server
+	yum install -y mysql-server mysql-devel
 	
 	
 	echo "install mysql end"
